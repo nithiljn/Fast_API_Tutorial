@@ -1,5 +1,23 @@
 from fastapi import FastAPI
 
+'''
+Browser
+   ↓
+Uvicorn (ASGI Server)
+   ↓
+FastAPI
+   ↓
+Starlette
+   ↓
+Python Code
+'''
+'''
+openapi.json
+      ↓
+Swagger UI
+      ↓
+Interactive Docs
+'''
 app = FastAPI(
     title="My first APP",
     description="This is my first App where i have been Created it on fast API",
@@ -7,5 +25,5 @@ app = FastAPI(
               )
 
 @app.get('/')
-async def root():
-    return {"message":"hello my first app"}
+async def root(name:str = "james"):
+    return {"message":f"hello my first app{name}"}
