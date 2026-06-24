@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,HTTPException
+from FirstStep.EmployeeData import EmployeeData
 
 '''
 Browser
@@ -27,3 +28,31 @@ app = FastAPI(
 @app.get('/')
 async def root(name:str = "james"):
     return {"message":f"hello my first app{name}"}
+
+"""
+Path Paramters
+"""
+@app.get('/items/{item_id}', response_model=EmployeeData)
+async def getProduct(item_id:int):
+      datas = [
+         {
+           "item_id":1,
+           "Name":"James Nithil",
+           "Contact":8220173595
+         },
+         {
+           "item_id":2,
+           "Name":"Gokul Raj",
+           "Contact":7384648383
+         }
+      ]
+      for data in datas:
+           if data["item_id"]==item_id:
+                return {
+                     "Name":data["Name"],
+                     "Contact":data["Contact"]
+                }
+      raise HTTPException(
+           status_code=400,
+           detail="Data Not Found"
+      )
