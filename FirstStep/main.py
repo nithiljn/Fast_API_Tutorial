@@ -1,6 +1,6 @@
 from fastapi import FastAPI,HTTPException
 from FirstStep.EmployeeData import EmployeeData
-
+from FirstStep.EmployeeName import EmployeeName
 '''
 Browser
    ↓
@@ -56,3 +56,15 @@ async def getProduct(item_id:int):
            status_code=400,
            detail="Data Not Found"
       )
+
+@app.get('/username/{employee_name}')
+async def getemployeeName(employee_name:EmployeeName):
+      if employee_name in EmployeeName.JAMES:
+           return {
+                "Name":EmployeeName.JAMES.value,
+                "status":"SUCCESSS"
+           }
+      raise HTTPException(
+           status_code=400,
+           detail="Invalid name you searched"
+      )  
