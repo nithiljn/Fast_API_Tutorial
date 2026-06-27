@@ -1,6 +1,8 @@
 from fastapi import FastAPI,HTTPException
 from FirstStep.EmployeeData import EmployeeData
 from FirstStep.EmployeeName import EmployeeName
+from pathlib import Path
+from fastapi.responses import FileResponse
 '''
 Browser
    ↓
@@ -68,3 +70,14 @@ async def getemployeeName(employee_name:EmployeeName):
            status_code=400,
            detail="Invalid name you searched"
       )  
+@app.get('/file/{file_path:path}')
+async def getFile(file_path:str):
+     path_area = Path(file_path)
+     if not path_area.exists() or not path_area.is_file():
+          raise HTTPException(
+               status_code=400,
+               detail="file not found"
+          )
+     return {
+          "file":file_path
+     }
