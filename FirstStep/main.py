@@ -1,5 +1,8 @@
-from fastapi import FastAPI
-
+from fastapi import FastAPI,HTTPException
+from FirstStep.EmployeeData import EmployeeData
+from FirstStep.EmployeeName import EmployeeName
+from pathlib import Path
+from fastapi.responses import FileResponse
 '''
 Browser
    ↓
@@ -27,3 +30,54 @@ app = FastAPI(
 @app.get('/')
 async def root(name:str = "james"):
     return {"message":f"hello my first app{name}"}
+
+"""
+Path Paramters
+"""
+@app.get('/items/{item_id}', response_model=EmployeeData)
+async def getProduct(item_id:int):
+      datas = [
+         {
+           "item_id":1,
+           "Name":"James Nithil",
+           "Contact":8220173595
+         },
+         {
+           "item_id":2,
+           "Name":"Gokul Raj",
+           "Contact":7384648383
+         }
+      ]
+      for data in datas:
+           if data["item_id"]==item_id:
+                return {
+                     "Name":data["Name"],
+                     "Contact":data["Contact"]
+                }
+      raise HTTPException(
+           status_code=400,
+           detail="Data Not Found"
+      )
+
+@app.get('/username/{employee_name}')
+async def getemployeeName(employee_name:EmployeeName):
+      if employee_name in EmployeeName.JAMES:
+           return {
+                "Name":EmployeeName.JAMES.value,
+                "status":"SUCCESSS"
+           }
+      raise HTTPException(
+           status_code=400,
+           detail="Invalid name you searched"
+      )  
+@app.get('/file/{file_path:path}')
+async def getFile(file_path:str):
+     path_area = Path(file_path)
+     if not path_area.exists() or not path_area.is_file():
+          raise HTTPException(
+               status_code=400,
+               detail="file not found"
+          )
+     return {
+          "file":file_path
+     }
