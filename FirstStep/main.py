@@ -3,6 +3,12 @@ from FirstStep.EmployeeData import EmployeeData
 from FirstStep.EmployeeName import EmployeeName
 from pathlib import Path
 from fastapi.responses import FileResponse
+from FirstStep.Item import Item
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 '''
 Browser
    ↓
@@ -81,3 +87,35 @@ async def getFile(file_path:str):
      return {
           "file":file_path
      }
+
+employee_data = [
+          {
+               "Name":"James Nithil V",
+               "Contact":8220173595,
+               "Salary":23000
+          },
+          {
+               "Name":"Gokul",
+               "Contact":46843939,
+               "Salary":24000
+          }
+     ]
+@app.post('/user/salary')
+async def getSalary(item:Item)->dict:
+     response_data = None
+     for res in employee_data:
+       if res["Name"].lower() == item.Name.lower():
+            response_data= res
+            break
+     if (response_data):
+          logger.info(f"reponse {response_data}")
+          return {
+               "Name":response_data["Name"],
+               "Salary":response_data["Salary"],
+               "Contact":response_data["Contact"]
+          }
+     raise HTTPException(
+          status_code=400,
+          detail="No record Found"
+     )
+print(type(employee_data))
