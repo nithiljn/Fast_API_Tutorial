@@ -1,11 +1,11 @@
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI,HTTPException,Query
 from FirstStep.EmployeeData import EmployeeData
 from FirstStep.EmployeeName import EmployeeName
 from pathlib import Path
 from fastapi.responses import FileResponse
 from FirstStep.Item import Item
 import logging
-
+from typing import Annotated
 logging.basicConfig(level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -118,4 +118,14 @@ async def getSalary(item:Item)->dict:
           status_code=400,
           detail="No record Found"
      )
-print(type(employee_data))
+
+@app.post('/userdata/{item_id}')
+async def updated_user_id(item:Item , item_id:int , q:Annotated[str | None , Query(min_length=3,max_length=10,description="for what uses !") ]= None):
+     results = {
+          "item_id":item_id,
+          **item.model_dump()
+     }
+     if q:
+          results.update({"q":q})
+     
+     return results
