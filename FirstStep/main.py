@@ -5,7 +5,9 @@ from pathlib import Path
 from fastapi.responses import FileResponse
 from FirstStep.Item import Item
 import logging
+from pydantic import AfterValidator
 from typing import Annotated
+from FirstStep.Student import Student
 logging.basicConfig(level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -129,3 +131,27 @@ async def updated_user_id(item:Item , item_id:int , q:Annotated[str | None , Que
           results.update({"q":q})
      
      return results
+def ageValidation(age :int):
+     if age <=18:
+          raise ValueError(
+               "Should be above age 18+"
+          )
+     return age
+
+
+'''
+Validation for student registeration
+'''
+@app.post('/student/')
+async def registration(sid:str ,student:Student , age: Annotated[int | None, AfterValidator(ageValidation)]=None, q:Annotated[str|None,Query(deprecated=True)]=None):
+     result = {
+          "SID":sid,
+          "Name":student.Name,
+          "Branch":student.Branch,
+          "Year":student.Year,
+     }
+     # if age >= 18:
+     #      result.update({"age":age,"Allowed":True})
+     # else:
+     #      result.update({"age":age,"Allowed":False})
+     return result 
